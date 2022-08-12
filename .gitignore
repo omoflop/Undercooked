@@ -1,10 +1,10 @@
+# Force include core files
+!*.yy
 !*.gml
 !/*.yyp
 
-# Builds
 # Builds for Desktop
 *.exe
-*.apk
 *.zip
 *.pkg
 
@@ -12,7 +12,6 @@
 *.apk
 *.ipa
 *.app
-*.zip
 *.xarchive
 
 # Builds for UWP
@@ -24,3 +23,4 @@
 
 # Miscellaneous
 *.dll
+*.log
