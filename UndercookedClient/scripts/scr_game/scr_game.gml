@@ -20,6 +20,7 @@ function Item(name_, chopped_=-1, pan_cooked_=-1, pot_cooked_=-1) constructor {
 	combinations = [];
 	
 	empty = false;
+	special = false;
 	
 	function toString() {
 		return name;
@@ -50,10 +51,22 @@ function Item(name_, chopped_=-1, pan_cooked_=-1, pot_cooked_=-1) constructor {
 	}
 }
 
+function SpecialItem(name_, chopped_=-1, cooked_pan_=-1, cooked_pot_=-1) : Item(name_, chopped_=-1, cooked_pan_=-1, cooked_pot_=-1) constructor {
+	name = name_;
+	
+	can_chop = 0;
+	can_cook_pan = 0;
+	can_cook_pot = 0;
+	
+	special = true;
+}
+	
 function ItemContainer(name_, chopped_=-1, cooked_pan_=-1, cooked_pot_=-1) : Item(name_, chopped_=-1, cooked_pan_=-1, cooked_pot_=-1) constructor {
 	is_container = true;
 	progress = 0;
 	index = 0;
+	
+	special = false;
 	
 	can_chop = 0;
 	can_cook_pan = 0;
@@ -78,7 +91,7 @@ function ItemContainer(name_, chopped_=-1, cooked_pan_=-1, cooked_pot_=-1) : Ite
 	}
 	
 	function can_combine(i) {
-		if (item.empty && !i.empty && !i.is_container && i.index != find_item("Dirty Plate")) {
+		if (item.empty && !i.empty && !i.is_container && !i.special) {
 			return true;
 		} else {
 			return item.can_combine(i);
@@ -110,7 +123,8 @@ new Item("Empty", -1, -1, -1),
 new ItemContainer("Plate"),
 new ItemContainer("Pan"),
 new ItemContainer("Pot"),
-new Item("Dirty Plate"),
+new SpecialItem("Dirty Plate"),
+new SpecialItem("Extinguisher"),
 new Item("Egg",						-1, "Fried Egg", -1),
 new Item("Fried Egg",				-1, -1, -1),
 new Item("Lettuce",					"Chopped Lettuce", -1, -1),

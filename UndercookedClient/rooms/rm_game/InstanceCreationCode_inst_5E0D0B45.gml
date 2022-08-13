@@ -1,1 +1,0 @@
-item_type = find_item("Egg")

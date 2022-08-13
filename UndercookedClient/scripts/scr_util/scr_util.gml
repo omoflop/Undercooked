@@ -3,6 +3,14 @@ function approach(val, goal, step) {
 	return val < goal ? min(val + step, goal) : max(val - step, goal);
 }
 
+function wrap(val, divider) {
+	var v = val % divider;
+	if (v < 0) {
+		v += divider;
+	}
+	return v;
+}
+
 
 function log(str) {
 	for (var i = 1; i < argument_count; i ++) {

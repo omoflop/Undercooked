@@ -1,0 +1,1 @@
+item = new_item(find_item("Extinguisher"))

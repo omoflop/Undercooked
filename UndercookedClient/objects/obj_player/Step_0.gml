@@ -44,4 +44,6 @@ y += vsp;
 
 depth = -bbox_bottom;
 
-find_reach()
+find_reach();
+
+process_extinguisher();
