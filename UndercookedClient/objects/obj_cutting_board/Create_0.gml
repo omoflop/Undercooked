@@ -7,10 +7,15 @@ image_speed = 0;
 
 progress_speed = 1/120;
 
+show_progress = true;
+
 function interact() {
+	
+	// Swap player and countertop items
 	swap();
 	
-	if (item != -1) {
+	// Determine if an item is present on countertop
+	if (!item.empty) {
 		image_index = 1;
 	} else {
 		image_index = 0;
@@ -18,13 +23,21 @@ function interact() {
 }
 
 function hold_interact() {
-	if (item != -1 && item.chopped != -1) {
-		item.progress = approach(item.progress, 1, progress_speed);
+	
+	// Make sure item can be chopped
+	if (item.can_chop) {
+		
+		// Chop item
+		increase_progress();
 	}
 }
 
 function progress_finished() {
-	if (item != -1 && item.chopped != -1) {
-		item = item.chopped;
+	
+	// Make sure item can be chopped
+	if (item.can_chop) {
+		
+		// Turn item into chopped item
+		item = new_item(item.chopped);
 	}
 }

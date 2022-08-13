@@ -1,5 +1,6 @@
 /// @desc
 
+if (global.player_frozen) return;
 
 
 //xaxis = global.key_right - global.key_left;
@@ -8,16 +9,16 @@ xaxis = gamepad_axis_value(DEVICE_INDEX, gp_axislh);
 yaxis = gamepad_axis_value(DEVICE_INDEX, gp_axislv);
 
 
-if (xaxis != 0) {
+if (abs(xaxis) > GP_DEADZONE) {
 	hsp = approach(hsp, xaxis*spd, acc);
 	xdir = xaxis;
 } else {
 	hsp = approach(hsp, 0, fric);
 }
 
-if (yaxis != 0) {
+if (abs(yaxis) > GP_DEADZONE) {
 	vsp = approach(vsp, yaxis*spd, acc);
-	ydir = yaxis
+	ydir = yaxis;
 } else {
 	vsp = approach(vsp, 0, fric);
 }
@@ -40,5 +41,7 @@ if (place_meeting(x, y+vsp, obj_solid)) {
 	vsp = 0;
 }
 y += vsp;
+
+depth = -bbox_bottom;
 
 find_reach()

@@ -1,19 +1,18 @@
 {
-  "name": "obj_countertop",
   "spriteId": {
     "name": "spr_countertop",
     "path": "sprites/spr_countertop/spr_countertop.yy",
   },
-  "spriteMaskId": null,
-  "visible": true,
   "solid": false,
-  "persistent": false,
-  "physicsObject": false,
+  "visible": true,
   "managed": true,
+  "spriteMaskId": null,
+  "persistent": false,
   "parentObjectId": {
     "name": "obj_solid",
     "path": "objects/obj_solid/obj_solid.yy",
   },
+  "physicsObject": false,
   "physicsSensor": false,
   "physicsShape": 1,
   "physicsGroup": 1,
@@ -33,10 +32,11 @@
   "properties": [],
   "overriddenProperties": [],
   "parent": {
-    "name": "Objects",
-    "path": "folders/Objects.yy",
+    "name": "Game Objects",
+    "path": "folders/Objects/Game Objects.yy",
   },
   "resourceVersion": "1.0",
+  "name": "obj_countertop",
   "tags": [],
   "resourceType": "GMObject",
 }

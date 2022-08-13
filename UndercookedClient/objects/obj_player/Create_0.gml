@@ -14,7 +14,7 @@ vsp = 0;
 fric = 0.4;
 acc = 0.4;
 
-item = -1;
+item = new_empty_item();
 reach = 20;
 
 function find_reach() {

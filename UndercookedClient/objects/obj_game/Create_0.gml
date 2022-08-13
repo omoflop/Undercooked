@@ -1,9 +1,12 @@
 /// @desc
 
+global.score = 0;
+global.player_frozen = false;
 
 
 #macro DEVICE_INDEX 0
-gamepad_set_axis_deadzone(DEVICE_INDEX, 0.2);
+#macro GP_DEADZONE 0.2
+gamepad_set_axis_deadzone(DEVICE_INDEX, GP_DEADZONE);
 
 function get_input() {
 	

@@ -1,19 +1,18 @@
 {
-  "name": "obj_source",
   "spriteId": {
     "name": "spr_source",
     "path": "sprites/spr_source/spr_source.yy",
   },
-  "spriteMaskId": null,
-  "visible": true,
   "solid": false,
-  "persistent": false,
-  "physicsObject": false,
+  "visible": true,
   "managed": true,
+  "spriteMaskId": null,
+  "persistent": false,
   "parentObjectId": {
     "name": "obj_countertop",
     "path": "objects/obj_countertop/obj_countertop.yy",
   },
+  "physicsObject": false,
   "physicsSensor": false,
   "physicsShape": 1,
   "physicsGroup": 1,
@@ -31,10 +30,11 @@
   "properties": [],
   "overriddenProperties": [],
   "parent": {
-    "name": "Objects",
-    "path": "folders/Objects.yy",
+    "name": "Game Objects",
+    "path": "folders/Objects/Game Objects.yy",
   },
   "resourceVersion": "1.0",
+  "name": "obj_source",
   "tags": [],
   "resourceType": "GMObject",
 }

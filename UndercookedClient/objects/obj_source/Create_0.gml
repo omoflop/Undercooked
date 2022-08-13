@@ -5,11 +5,17 @@ event_inherited();
 item_type = 0;
 
 function interact() {
-	if (item != -1) {
-		swap();
-	} else if (target.item == -1) {
-		target.item = clone_struct(global.items[item_type]);
-	} else {
+	
+	// Player has no item
+	if (target.item.empty && item.empty) {
+		
+		// Get item from source
+		target.item = new_item(item_type);
+	} 
+	// Countertop or player has an item
+	else {
+		
+		// Swap player and countertop items
 		swap();	
 	}
 }
