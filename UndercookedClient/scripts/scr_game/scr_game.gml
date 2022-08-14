@@ -1,23 +1,19 @@
-
 randomize();
 
-function Item(name_, chopped_=-1, pan_cooked_=-1, pot_cooked_=-1) constructor {
-	chopped = chopped_;
-	pan_cooked = pan_cooked_;
-	pot_cooked = pot_cooked_;
-	
+enum RecipeType {
+	chopping,
+	pan_cooked,
+	pot_cooked,
+	combo
+}
+
+function Item(name_) constructor {
 	rand = random(10);
-	
-	can_chop = (chopped_ != -1);
-	can_cook_pan = (pan_cooked_ != -1);
-	can_cook_pot = (pot_cooked_ != -1);
 	
 	progress = 0;
 	is_container = false;
 	index = 0;
 	name = name_;
-	
-	combinations = [];
 	
 	empty = false;
 	special = false;
@@ -31,46 +27,51 @@ function Item(name_, chopped_=-1, pan_cooked_=-1, pot_cooked_=-1) constructor {
 	}
 	
 	function can_combine(item) {
-		var item_index = item.index;
-		for (var i = 0; i < array_length(combinations); i ++) {
-			var c = combinations[i];
-			if (c[0] == item_index) return true;
-		}
-		return false;
+		
+		var r = find_recipe(RecipeType.combo, [index, item.index]);
+		return r != undefined;
+		
+		//var item_index = item.index;
+		//for (var i = 0; i < array_length(combinations); i ++) {
+		//	var c = combinations[i];
+		//	if (c[0] == item_index) return true;
+		//}
+		//return false;
 	}
 	
 	function combine(item) {
-		var item_index = item.index;
-		for (var i = 0; i < array_length(combinations); i ++) {
-			var c = combinations[i];
-			if (c[0] == item_index) {
-				return new_item(c[1]);
-			}
-		}
+		//var ingredients = get_base_ingredients(index);
+		//array_push_all(ingredients, get_base_ingredients(item.index));
+		var r = find_recipe(RecipeType.combo, [index, item.index]);
+		if (r != undefined) return new_item(r.output);
 		return new_empty_item();
+		
+		//var item_index = item.index;
+		//for (var i = 0; i < array_length(combinations); i ++) {
+		//	var c = combinations[i];
+		//	if (c[0] == item_index) {
+		//		return new_item(c[1]);
+		//	}
+		//}
+		//return new_empty_item();
+	}
+	
+	function is_applicable_to(recipe_type) {
+		return in_recipe_type(index, recipe_type);	
 	}
 }
 
-function SpecialItem(name_, chopped_=-1, cooked_pan_=-1, cooked_pot_=-1) : Item(name_, chopped_=-1, cooked_pan_=-1, cooked_pot_=-1) constructor {
-	name = name_;
-	
-	can_chop = 0;
-	can_cook_pan = 0;
-	can_cook_pot = 0;
-	
+function SpecialItem(name_) : Item(name_) constructor {
+	name = name_;	
 	special = true;
 }
 	
-function ItemContainer(name_, chopped_=-1, cooked_pan_=-1, cooked_pot_=-1) : Item(name_, chopped_=-1, cooked_pan_=-1, cooked_pot_=-1) constructor {
+function ItemContainer(name_) : Item(name_) constructor {
 	is_container = true;
 	progress = 0;
 	index = 0;
 	
 	special = false;
-	
-	can_chop = 0;
-	can_cook_pan = 0;
-	can_cook_pot = 0;
 	
 	function toString() {
 		if (item.empty) {
@@ -112,43 +113,141 @@ function ItemContainer(name_, chopped_=-1, cooked_pan_=-1, cooked_pot_=-1) : Ite
 	}
 }
 
-globalvar Plate;
-Plate = new ItemContainer();
-Plate.index = 0;
+function Recipe(inputs_, output_, type_) constructor {
+	inputs = [];
+	for(var i = 0; i < array_length(inputs_); i++) {
+		inputs[i] = get_item_id(inputs_[i]);
+	}
+	output = get_item_id(output_);
+	type = type_;
+}
 
+function SingleInputRecipe(input_, output_, type_) : Recipe(undefined, output_, type_) constructor {
+	inputs = [get_item_id(input_)];
+}
 
+function ChoppingRecipe(input_, output_) : SingleInputRecipe(input_, output_, RecipeType.chopping) constructor {}
+function PanRecipe(input_, output_) : SingleInputRecipe(input_, output_, RecipeType.pan_cooked) constructor {}
+function PotRecipe(input_, output_) : SingleInputRecipe(input_, output_, RecipeType.pot_cooked) constructor {}
+
+// Happens when putting items together on a plate
+function ComboRecipe(inputs_, output_) : Recipe(inputs_, output_, RecipeType.combo) constructor {}
+
+// Finds a recipe of a certain type that needs specified inputs (array)
+function find_recipe(recipe_type, inputs_) {
+	for(var i = 0; i < array_length(global.recipes); i++) {
+		var cur_recipe = global.recipes[i];
+		log("%, %", cur_recipe.inputs, inputs_);
+		if (cur_recipe.type == recipe_type && array_contents_equal(cur_recipe.inputs, inputs_)) return cur_recipe;
+	}
+	
+	return undefined;
+}
+
+function array_contents_equal(a, b) {
+	var a1 = clone_value(a);
+	var b1 = clone_value(b);
+	array_sort(a1, number_compare);
+	array_sort(b1, number_compare);
+	return array_equals(a1, b1);
+}
+
+function make_recipe(recipe_type, inputs) {
+	log("Looking up recipe for: %", item_array_to_string(inputs));
+	log("Exists? %", find_recipe(recipe_type, inputs) != undefined);
+	var out = find_recipe(recipe_type, inputs).output;
+	return out;
+}
+
+function item_array_to_string(array) {
+	var arr = [];
+	for(var i = 0; i < array_length(array); i++) {
+		arr[i] = global.items[array[i]];	
+	}
+	return string(arr);
+}
+
+// Gets the basic items a combo recipe is made from
+// (ex: item = Green Eggs, returns ["Egg", "Lettuce"])
+// Returns undefined if nothing is found.
+// Used for combo recipes that require 3+ items and the first 2 might already have a recipe.
+function get_base_ingredients(item) {
+	for(var i = 0; i < array_length(global.recipes); i++) {
+		var cur_recipe = global.recipes[i];
+		if (cur_recipe.type == RecipeType.combo && cur_recipe.output == item) {
+			return cur_recipe.inputs;	
+		}
+	}
+	
+	return undefined;
+}
+
+function in_recipe_type(item_id, recipe_type) {
+	for(var i = 0; i < array_length(global.recipes); i++) {
+		if (global.recipes[i].type == recipe_type) {
+			var inputs = global.recipes[i].inputs;
+			for(var j = 0; j < array_length(inputs); j++) {
+				if (inputs[j] == item_id) {
+					
+					
+					return true;
+				}
+			}
+		}
+	}
+	
+	return false;
+}
 
 global.items = [
-new Item("Empty", -1, -1, -1),
-new ItemContainer("Plate"),
-new ItemContainer("Pan"),
-new ItemContainer("Pot"),
-new SpecialItem("Dirty Plate"),
-new SpecialItem("Extinguisher"),
-new Item("Egg",						-1, "Fried Egg", -1),
-new Item("Fried Egg",				-1, -1, -1),
-new Item("Lettuce",					"Chopped Lettuce", -1, -1),
-new Item("Chopped Lettuce",			-1, -1, -1),
-new Item("Tomato",					"Chopped Tomato", -1, -1),
-new Item("Chopped Tomato",			-1, -1, -1),
-new Item("Beef",					"Chopped Beef", "Cooked Beef", -1),
-new Item("Chopped Beef",			-1, "Chopped Cooked Beef", -1),
-new Item("Cooked Beef",				"Chopped Beef", -1, -1),
-new Item("Chopped Cooked Beef",		-1, -1, -1),
-new Item("Chicken",					"Chopped Beef", "Cooked Chicken", -1),
-new Item("Chopped Chicken",			-1, "Chopped Cooked Chicken", -1),
-new Item("Cooked Chicken",			"Chopped Chicken", -1, -1),
-new Item("Chopped Cooked Chicken",	-1, -1, -1),
-new Item("Pork",					"Chopped Beef", "Cooked Pork", -1),
-new Item("Chopped Pork",			-1, "Chopped Cooked Pork", -1),
-new Item("Cooked Pork",				"Chopped Pork", -1, -1),
-new Item("Chopped Cooked Pork",		-1, -1, -1),
-new Item("Green Eggs",				-1, -1, -1),
-]
+	new Item("Empty"),
+	new ItemContainer("Plate"),
+	new ItemContainer("Pan"),
+	new ItemContainer("Pot"),
+	new SpecialItem("Dirty Plate"),
+	new SpecialItem("Extinguisher"),
+	new Item("Egg"),
+	new Item("Fried Egg"),
+	new Item("Lettuce"),
+	new Item("Chopped Lettuce"),
+	new Item("Tomato"),
+	new Item("Chopped Tomato"),
+	new Item("Beef"),
+	new Item("Chopped Beef"),
+	new Item("Cooked Beef"),
+	new Item("Chopped Cooked Beef"),
+	new Item("Chicken"),
+	new Item("Chopped Chicken"),
+	new Item("Cooked Chicken"),
+	new Item("Chopped Cooked Chicken"),
+	new Item("Pork"),
+	new Item("Chopped Pork"),
+	new Item("Cooked Pork"),
+	new Item("Chopped Cooked Pork"),	
+	new Item("Green Eggs"),
+	new Item("Flour"),
+	new Item("Sugar"),
+	new Item("Tortilla"),
+	new Item("Tomato Salad"),
+	new Item("Lettuce Wrap"),
+	new Item("Lettuce Tomato Wrap"),
+];
 
-global.item_combinations = [
-["Egg", "Lettuce", "Green Eggs"],
-]
+global.recipes = [
+	new ChoppingRecipe("Lettuce", "Chopped Lettuce"),
+	new ChoppingRecipe("Tomato",  "Chopped Tomato"),
+	new ChoppingRecipe("Beef",    "Chopped Beef"),
+	new ChoppingRecipe("Chicken", "Chopped Chicken"),
+	new ChoppingRecipe("Pork",    "Chopped Pork"),
+	new ChoppingRecipe("Cooked Beef",    "Chopped Cooked Beef"),
+	new ChoppingRecipe("Cooked Chicken", "Chopped Cooked Chicken"),
+	new ChoppingRecipe("Cooked Pork",    "Chopped Cooked Pork"),
+	
+	new ComboRecipe(["Egg", "Lettuce"], "Green Eggs"),
+	new ComboRecipe(["Tortilla", "Chopped Lettuce"], "Lettuce Wrap"),
+	new ComboRecipe(["Chopped Tomato", "Lettuce Wrap"], "Lettuce Tomato Wrap"),
+	new ComboRecipe(["Chopped Lettuce", "Chopped Tomato"], "Tomato Salad"),
+];
 
 global.items[0].empty = true;
 
@@ -156,23 +255,21 @@ for (var i = 0; i < array_length(global.items); i ++) {
 	var item = global.items[i];
 	with (item) {
 		index = i;
-		chopped = find_item(chopped);
-		pan_cooked = find_item(pan_cooked);
-		pot_cooked = find_item(pot_cooked);
 		
 		if (is_container) {
 			self.item = new_empty_item();
 		}
 	}
 }
-for (var i = 0; i < array_length(global.item_combinations); i ++) {
-	var c = global.item_combinations[i];
-	var i1 = find_item(c[0]);
-	var i2 = find_item(c[1]);
-	var result = find_item(c[2]);
-	array_push(global.items[i1].combinations, [i2, result]);
-	array_push(global.items[i2].combinations, [i1, result]);
-}
+
+//for (var i = 0; i < array_length(global.item_combinations); i ++) {
+//	//var c = global.item_combinations[i];
+//	//var i1 = get_item_id(c[0]);
+//	//var i2 = get_item_id(c[1]);
+//	//var result = get_item_id(c[2]);
+//	//array_push(global.items[i1].combinations, [i2, result]);
+//	//array_push(global.items[i2].combinations, [i1, result]);
+//}
 
 
 
@@ -209,7 +306,7 @@ function clone_value(v) {
 	return v;
 }
 
-function find_item(name) {
+function get_item_id(name) {
 	for (var i = 0; i < array_length(global.items); i ++) {
 		if (global.items[i].name == name) {
 			return i;
@@ -222,16 +319,16 @@ function new_empty_item() {
 	return new_item(0);
 }
 
-function new_item(item_type) {
-	return clone_struct(global.items[item_type]);
+function new_item(item_id) {
+	return clone_struct(global.items[item_id]);
 }
 
 function new_plate() {
-	return clone_struct(global.items[find_item("Plate")]);
+	return clone_struct(global.items[get_item_id("Plate")]);
 }
 
 function new_plate_dirty() {
-	return new_item(find_item("Dirty Plate"));
+	return new_item(get_item_id("Dirty Plate"));
 }
 
 function add_score(s) {
@@ -253,3 +350,9 @@ function game_level_end() {
 	global.player_frozen = true;
 	instance_create_depth(0, 0, -9999, obj_game_end);
 }
+
+//var it = new_item(get_item_id("Lettuce"));
+//log(it.is_applicable_to(RecipeType.chopping));
+//log(it.is_applicable_to(RecipeType.combo));
+//log(it.is_applicable_to(RecipeType.pan_cooked));
+//log(it.is_applicable_to(RecipeType.pot_cooked));

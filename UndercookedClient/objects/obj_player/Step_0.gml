@@ -5,9 +5,8 @@ if (global.player_frozen) return;
 
 //xaxis = global.key_right - global.key_left;
 //yaxis = global.key_down - global.key_up;
-xaxis = gamepad_axis_value(DEVICE_INDEX, gp_axislh);
-yaxis = gamepad_axis_value(DEVICE_INDEX, gp_axislv);
-
+xaxis = global.input_xaxis;
+yaxis = global.input_yaxis;
 
 if (abs(xaxis) > GP_DEADZONE) {
 	hsp = approach(hsp, xaxis*spd, acc);

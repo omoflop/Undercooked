@@ -2,7 +2,7 @@
 
 event_inherited();
 
-item_type = 0;
+item_id = 0;
 
 function interact() {
 	
@@ -10,7 +10,7 @@ function interact() {
 	if (target.item.empty && item.empty) {
 		
 		// Get item from source
-		target.item = new_item(item_type);
+		target.item = new_item(item_id);
 	} 
 	// Countertop or player has an item
 	else {
@@ -18,4 +18,9 @@ function interact() {
 		// Swap player and countertop items
 		swap();	
 	}
+}
+
+function draw() {
+	
+	draw_sprite_ext(spr_items, item_id, x+8, y+3, 1, 1, 0, c_gray, 1);
 }

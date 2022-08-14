@@ -1,9 +1,9 @@
 /// @desc
 
 orders = [{
-	item: find_item("Green Eggs"),
+	item: get_item_id("Green Eggs"),
 	item_sprite_index: 0,
-	ingredients: [find_item("Egg"), find_item("Lettuce")],
+	ingredients: [get_item_id("Egg"), get_item_id("Lettuce")],
 }]
 
 current_orders = [];

@@ -4,10 +4,10 @@ draw_self();
 
 var size = 16;
 
-
+draw();
 draw_item();
 
-draw();
+
 	
 if (player_hover) {
 	gpu_set_fog(1, c_white, 1, 0);

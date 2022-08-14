@@ -23,9 +23,8 @@ function interact() {
 }
 
 function hold_interact() {
-	
 	// Make sure item can be chopped
-	if (item.can_chop) {
+	if (item.is_applicable_to(RecipeType.chopping)) {
 		
 		// Chop item
 		increase_progress();
@@ -35,9 +34,9 @@ function hold_interact() {
 function progress_finished() {
 	
 	// Make sure item can be chopped
-	if (item.can_chop) {
+	if (item.is_applicable_to(RecipeType.chopping)) {
 		
 		// Turn item into chopped item
-		item = new_item(item.chopped);
+		item = new_item(make_recipe(RecipeType.chopping, [item.index]));
 	}
 }

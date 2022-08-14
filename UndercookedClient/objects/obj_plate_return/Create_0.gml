@@ -9,7 +9,7 @@ count = 0;
 timer = 3;
 
 // Get dirty plate image index
-item_subimg = find_item("Dirty Plate")
+item_subimg = get_item_id("Dirty Plate")
 
 function trigger() {
 	

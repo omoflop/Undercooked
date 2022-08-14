@@ -17,7 +17,7 @@ acc = 0.4;
 item = new_empty_item();
 reach = 20;
 
-extinguisher_index = find_item("Extinguisher");
+extinguisher_index = get_item_id("Extinguisher");
 
 function find_reach() {
 	var xx = x + reach * cos(axis_angle);
@@ -33,7 +33,7 @@ function find_reach() {
 				interact();
 			}
 			
-			if (global.key_hold_action && item.empty) {
+			if (global.key_hold_action && target.item.empty) {
 				hold_interact();
 			}
 		}

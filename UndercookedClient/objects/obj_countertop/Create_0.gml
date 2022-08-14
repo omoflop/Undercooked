@@ -36,7 +36,7 @@ function increase_progress() {
 }
 
 function setup(name) {
-	item = new_item(find_item(name));
+	item = new_item(get_item_id(name));
 	if (item.is_container) {
 		item = new_plate();
 	}

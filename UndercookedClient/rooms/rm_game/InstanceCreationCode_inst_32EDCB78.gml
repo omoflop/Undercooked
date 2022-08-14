@@ -1,1 +1,1 @@
-item = new_item(find_item("Extinguisher"))
+item = new_item(get_item_id("Extinguisher"))

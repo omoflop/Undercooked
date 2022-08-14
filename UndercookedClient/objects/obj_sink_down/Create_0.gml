@@ -18,8 +18,8 @@ side_x = x + 16;
 side_y = y;
 
 // Get plate image index
-plate_subimg = find_item("Plate");
-dirty_plate_subimg = find_item("Dirty Plate");
+plate_subimg = get_item_id("Plate");
+dirty_plate_subimg = get_item_id("Dirty Plate");
 
 function draw() {
 	for (var i = 0; i < count; i ++) {

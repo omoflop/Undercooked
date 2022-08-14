@@ -48,3 +48,13 @@ function draw_text_outline(x, y, str, outline_color=c_black) {
 	draw_set_color(c);
 	draw_text(x, y, str);
 }
+
+function array_push_all(array, other_array) {
+	for(var i = 0; i < array_length(other_array); i++) {
+		array_push(array, other_array[i]);	
+	}
+}
+
+function number_compare(elm1, elm2) {
+    return elm1 - elm2;
+}
