@@ -1,5 +1,4 @@
 {
-  "name": "ts_kitchen",
   "spriteId": {
     "name": "spr_ts_kitchen",
     "path": "sprites/spr_ts_kitchen/spr_ts_kitchen.yy",
@@ -10,13 +9,13 @@
   "tileyoff": 0,
   "tilehsep": 0,
   "tilevsep": 0,
-  "out_tilehborder": 2,
-  "out_tilevborder": 2,
   "spriteNoExport": true,
   "textureGroupId": {
     "name": "Default",
     "path": "texturegroups/Default",
   },
+  "out_tilehborder": 2,
+  "out_tilevborder": 2,
   "out_columns": 6,
   "tile_count": 40,
   "autoTileSets": [],
@@ -77,6 +76,7 @@
     "path": "folders/Tile Sets.yy",
   },
   "resourceVersion": "1.0",
+  "name": "ts_kitchen",
   "tags": [],
   "resourceType": "GMTileSet",
 }
