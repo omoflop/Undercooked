@@ -10,7 +10,8 @@ function interact() {
 	if (target.item.empty && item.empty) {
 		
 		// Get item from source
-		target.item = new_item(item_id);
+		target.set_item(new_item(item_id));
+		//target.item = new_item(item_id);
 	} 
 	// Countertop or player has an item
 	else {

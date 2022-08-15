@@ -10,9 +10,12 @@ function interact() {
 		
 		// Clear container
 		target.item.clear();
+		target.update_item();
+		
 	} else if (!target.item.special) {
 		
 		// Remove held item
-		target.item = new_empty_item();
+		//target.item = new_empty_item();
+		target.set_item(new_empty_item());
 	}
 }

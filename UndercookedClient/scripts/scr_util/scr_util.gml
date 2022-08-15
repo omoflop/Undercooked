@@ -58,3 +58,46 @@ function array_push_all(array, other_array) {
 function number_compare(elm1, elm2) {
     return elm1 - elm2;
 }
+
+function draw_set_text(font=draw_get_font(), halign, valign) {
+	draw_set_font(font);
+	draw_set_halign(halign);
+	draw_set_valign(valign);
+}
+
+function draw_reset_text() {
+	draw_set_font(fnt_main);
+	draw_set_halign(fa_left);
+	draw_set_valign(fa_top);
+}
+
+function clone_struct(s) {
+	var new_s = {};
+	var names = variable_struct_get_names(s);
+	for (var i = 0; i < array_length(names); i ++) {
+		var n = names[i];
+
+		if (is_method(s[$ n])) {
+			new_s[$ n] = method(new_s, s[$ n]);
+		} else {
+			new_s[$ n] = clone_value(s[$ n]);
+		}
+	}
+	return new_s;
+}
+
+function clone_value(v) {
+	if (is_array(v)) {
+		var a = [];
+		for (var i = 0; i < array_length(v); i ++) {
+			array_push(a, clone_value(v[i]));
+		}
+		return a;
+	} else if (is_string(v) || is_real(v)) {
+		return v;
+	} else if (is_struct(v)) {
+		return clone_struct(v);
+	}
+	
+	return v;
+}

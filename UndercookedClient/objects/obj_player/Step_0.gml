@@ -46,3 +46,5 @@ depth = -bbox_bottom;
 find_reach();
 
 process_extinguisher();
+
+process_network();

@@ -1,5 +1,8 @@
 {
   "resources": [
+    {"id":{"name":"scr_network","path":"scripts/scr_network/scr_network.yy",},"order":0,},
+    {"id":{"name":"scr_util","path":"scripts/scr_util/scr_util.yy",},"order":1,},
+    {"id":{"name":"obj_server","path":"objects/obj_server/obj_server.yy",},"order":0,},
     {"id":{"name":"Room1","path":"rooms/Room1/Room1.yy",},"order":0,},
   ],
   "Options": [
@@ -42,7 +45,7 @@
   ],
   "IncludedFiles": [],
   "MetaData": {
-    "IDEVersion": "2022.5.0.8",
+    "IDEVersion": "2022.6.1.26",
   },
   "resourceVersion": "1.5",
   "name": "UndercookedServer",

@@ -34,6 +34,7 @@ function interact() {
 		count --;
 		
 		// Setup new player item
-		target.item = new_plate_dirty();
+		target.set_item(new_plate_dirty());
+		//target.item = new_plate_dirty();
 	}
 }

@@ -18,9 +18,9 @@ function Item(name_) constructor {
 	empty = false;
 	special = false;
 	
-	function toString() {
-		return name;
-	}
+	//function toString() {
+	//	return name;
+	//}
 	
 	function draw(x, y) {
 		draw_sprite(spr_items, index, x, y);
@@ -73,13 +73,13 @@ function ItemContainer(name_) : Item(name_) constructor {
 	
 	special = false;
 	
-	function toString() {
-		if (item.empty) {
-			return "Plate (empty)";
-		} else {
-			return "Plate (" + item.toString() + ")";
-		}
-	}
+	//function toString() {
+	//	if (item.empty) {
+	//		return "Plate (empty)";
+	//	} else {
+	//		return "Plate (" + item.toString() + ")";
+	//	}
+	//}
 	
 	item = -1;
 	function add_item(i) {
@@ -275,35 +275,20 @@ for (var i = 0; i < array_length(global.items); i ++) {
 
 
 
-function clone_struct(s) {
-	var new_s = {};
-	var names = variable_struct_get_names(s);
+function construct_item(item) {
+	var s = new_item(item.index);
+	
+	var names = variable_struct_get_names(item);
 	for (var i = 0; i < array_length(names); i ++) {
 		var n = names[i];
-
-		if (is_method(s[$ n])) {
-			new_s[$ n] = method(new_s, s[$ n]);
-		} else {
-			new_s[$ n] = clone_value(s[$ n]);
-		}
-	}
-	return new_s;
-}
-
-function clone_value(v) {
-	if (is_array(v)) {
-		var a = [];
-		for (var i = 0; i < array_length(v); i ++) {
-			array_push(a, clone_value(v[i]));
-		}
-		return a;
-	} else if (is_string(v) || is_real(v)) {
-		return v;
-	} else if (is_struct(v)) {
-		return clone_struct(v);
+		s[$ n] = item[$ n];
 	}
 	
-	return v;
+	if (s.is_container) {
+		s.item = construct_item(s.item);
+	}
+	
+	return s;
 }
 
 function get_item_id(name) {

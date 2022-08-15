@@ -19,6 +19,16 @@ reach = 20;
 
 extinguisher_index = get_item_id("Extinguisher");
 
+function set_item(i) {
+	send_info("set_item", {id: global.client.client_id, item: i});
+}
+
+function update_item() {
+	send_info("set_item", {id: global.client.client_id, item: item});
+}
+
+update_item();
+
 function find_reach() {
 	var xx = x + reach * cos(axis_angle);
 	var yy = y + reach * sin(axis_angle);
@@ -51,5 +61,11 @@ function process_extinguisher() {
 		with (instance_create_depth(xx, yy, -yy, obj_particle_extinguisher)) {
 			angle = a + choose(-1, 1) * random(35);
 		}
+	}
+}
+
+function process_network() {
+	if (x != xprevious || y != yprevious) {
+		send_info("player_movement", {id: global.client.client_id, x: x, y: y, dir: axis_angle});
 	}
 }

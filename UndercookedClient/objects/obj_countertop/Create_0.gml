@@ -11,10 +11,16 @@ offset = 8;
 
 show_progress = false;
 
+unique_id = y * room_width + x;
+
 progress_speed = 0;
 function progress_finished() {}
 
 function draw() {}
+
+function set_item(i) {
+	send_info("set_item", {id: unique_id, item: i});
+}
 
 function interact() {
 	swap();
@@ -32,13 +38,6 @@ function increase_progress() {
 	
 	if (item.progress == 1) {
 		progress_finished();
-	}
-}
-
-function setup(name) {
-	item = new_item(get_item_id(name));
-	if (item.is_container) {
-		item = new_plate();
 	}
 }
 
@@ -69,8 +68,10 @@ function swap() {
 			
 			// Swap items
 			var temp = item;
-			item = target.item;
-			target.item = temp;
+			set_item(target.item);
+			target.set_item(temp);
+			//item = target.item;
+			//target.item = temp;
 		} else {
 			
 			// Add item to container
@@ -78,9 +79,11 @@ function swap() {
 			
 			// Remove other item
 			if (player_hold_container) {
-				item = new_empty_item();
+				set_item(new_empty_item());
+				//item = new_empty_item();
 			} else {
-				target.item = new_empty_item();
+				target.set_item(new_empty_item());
+				//target.item = new_empty_item();
 			}
 		}
 	} else {
@@ -88,8 +91,10 @@ function swap() {
 		
 		// Swap items
 		var temp = item;
-		item = target.item;
-		target.item = temp;
+		set_item(target.item);
+		target.set_item(temp);
+		//item = target.item;
+		//target.item = temp;
 	}
 }
 

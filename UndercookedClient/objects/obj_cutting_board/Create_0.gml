@@ -37,6 +37,6 @@ function progress_finished() {
 	if (item.is_applicable_to(RecipeType.chopping)) {
 		
 		// Turn item into chopped item
-		item = new_item(make_recipe(RecipeType.chopping, [item.index]));
+		set_item(new_item(make_recipe(RecipeType.chopping, [item.index])));
 	}
 }
