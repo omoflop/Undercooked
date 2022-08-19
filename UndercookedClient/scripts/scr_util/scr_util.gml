@@ -59,7 +59,8 @@ function number_compare(elm1, elm2) {
     return elm1 - elm2;
 }
 
-function draw_set_text(font=draw_get_font(), halign, valign) {
+function draw_set_text(font=draw_get_font(), halign=fa_left, valign=fa_top, color=draw_get_color()) {
+	draw_set_color(color);
 	draw_set_font(font);
 	draw_set_halign(halign);
 	draw_set_valign(valign);
@@ -69,6 +70,7 @@ function draw_reset_text() {
 	draw_set_font(fnt_main);
 	draw_set_halign(fa_left);
 	draw_set_valign(fa_top);
+	draw_set_color(c_white);
 }
 
 function clone_struct(s) {
@@ -100,4 +102,28 @@ function clone_value(v) {
 	}
 	
 	return v;
+}
+
+function array_contents_equal(a, b) {
+	var a1 = clone_value(a);
+	var b1 = clone_value(b);
+	array_sort(a1, number_compare);
+	array_sort(b1, number_compare);
+	return array_equals(a1, b1);
+}
+
+function round_to_multiple(number, multiple) {
+	var result = number + multiple/2;
+	result -= result % multiple;
+	return result;
+}
+
+
+
+function debug_log(str, color=c_white) {
+	if (instance_exists(obj_debug_log)) {
+		with (obj_debug_log) {
+			setup(string(str), color);
+		}
+	}
 }

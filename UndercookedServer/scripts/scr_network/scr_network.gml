@@ -6,7 +6,7 @@ function received_packet(buffer, socket)
 
 	var packet = json_parse(__in_data);	
 	
-	log(msg_id + ": " + string(packet));
+	//log(msg_id + ": " + string(packet));
 	
 	switch (msg_id) {
 		case "client_connect":
@@ -19,7 +19,7 @@ function received_packet(buffer, socket)
 			break;
 		
 		case "start_game":
-			game_active = true;
+			activate_game();
 			send_info_everyone("start_game", packet);
 			break;
 		
@@ -43,6 +43,48 @@ function received_packet(buffer, socket)
 			c.dir = packet.dir;
 			
 			send_info_everyone(msg_id, packet, socket);
+			break;
+		
+		case "finish_order":
+			finish_order(packet.id);
+			send_info_everyone(msg_id, packet);
+			break;
+		
+		case "update_stack_count":
+			send_info_everyone(msg_id, packet);
+			break;
+		
+		case "make_extinguisher_particle":
+			send_info_everyone(msg_id, packet, socket);
+			break;
+		
+		case "map_movement":
+			send_info_everyone(msg_id, packet, socket);
+			break;
+		
+		case "select_level":
+			global.level_index = packet.level_index;
+			send_info_everyone("goto_level", packet);
+			break;
+		
+		case "level_ready":
+			var found = false;
+			for (var i = 0; i < array_length(level_ready); i ++) {
+				var l = level_ready[i];
+				if (l == packet.id) {
+					found = true;
+				}
+			}
+			if (!found) {
+				array_push(level_ready, packet.id);
+			}
+			if (array_length(level_ready) >= client_count) {
+				start_level();
+			}
+			break;
+		
+		case "endscreen_done":
+			send_info_everyone(msg_id, packet);
 			break;
 	}
 }

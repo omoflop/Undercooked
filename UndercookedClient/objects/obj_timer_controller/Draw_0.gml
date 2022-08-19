@@ -1,5 +1,7 @@
 /// @desc
 
+if (!is_setup) return;
+
 draw_self();
 
 draw_set_halign(fa_center);

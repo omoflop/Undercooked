@@ -1,8 +1,6 @@
 /// @desc
 
-global.game_timer = 120;
-
-finished = false;
+is_setup = true;
 
 function get_timer_string() {
 	var v = global.game_timer;

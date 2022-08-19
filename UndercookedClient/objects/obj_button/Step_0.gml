@@ -19,6 +19,10 @@ if (mouse_hover(x, y, width, height)) {
 	
 	// Reset button pressed flag
 	pressed = false;
+	
+	if (mouse_check_button_pressed(mb_left)) {
+		press_outside();
+	}
 }
 
 // Check mouse release

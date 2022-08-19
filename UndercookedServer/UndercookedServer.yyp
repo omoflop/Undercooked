@@ -1,6 +1,11 @@
 {
   "resources": [
+    {"id":{"name":"timer_controller","path":"objects/timer_controller/timer_controller.yy",},"order":1,},
+    {"id":{"name":"order_controller","path":"objects/order_controller/order_controller.yy",},"order":4,},
+    {"id":{"name":"window_frame","path":"extensions/window_frame/window_frame.yy",},"order":0,},
     {"id":{"name":"scr_network","path":"scripts/scr_network/scr_network.yy",},"order":0,},
+    {"id":{"name":"window_controller","path":"objects/window_controller/window_controller.yy",},"order":2,},
+    {"id":{"name":"scr_game","path":"scripts/scr_game/scr_game.yy",},"order":2,},
     {"id":{"name":"scr_util","path":"scripts/scr_util/scr_util.yy",},"order":1,},
     {"id":{"name":"obj_server","path":"objects/obj_server/obj_server.yy",},"order":0,},
     {"id":{"name":"Room1","path":"rooms/Room1/Room1.yy",},"order":0,},

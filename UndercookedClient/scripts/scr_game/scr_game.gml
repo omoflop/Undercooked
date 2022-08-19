@@ -1,5 +1,7 @@
 randomize();
 
+#region Items
+
 enum RecipeType {
 	chopping,
 	pan_cooked,
@@ -8,8 +10,6 @@ enum RecipeType {
 }
 
 function Item(name_) constructor {
-	rand = random(10);
-	
 	progress = 0;
 	is_container = false;
 	index = 0;
@@ -18,9 +18,21 @@ function Item(name_) constructor {
 	empty = false;
 	special = false;
 	
-	//function toString() {
-	//	return name;
-	//}
+	function toString() {
+		return name;
+	}
+	
+	function make_packet() {
+		return {
+			index: index,
+			progress: progress,
+		}
+	}
+	
+	function load_packet(packet) {
+		progress = packet.progress;
+	}
+	
 	
 	function draw(x, y) {
 		draw_sprite(spr_items, index, x, y);
@@ -73,13 +85,24 @@ function ItemContainer(name_) : Item(name_) constructor {
 	
 	special = false;
 	
-	//function toString() {
-	//	if (item.empty) {
-	//		return "Plate (empty)";
-	//	} else {
-	//		return "Plate (" + item.toString() + ")";
-	//	}
-	//}
+	function toString() {
+		if (item.empty) {
+			return "Plate (empty)";
+		} else {
+			return "Plate (" + item.toString() + ")";
+		}
+	}
+	
+	function make_packet() {
+		return {
+			index: index,
+			item: item.make_packet(),
+		}
+	}
+	
+	function load_packet(packet) {
+		item = load_item(packet.item);
+	}
 	
 	item = -1;
 	function add_item(i) {
@@ -144,13 +167,6 @@ function find_recipe(recipe_type, inputs_) {
 	return undefined;
 }
 
-function array_contents_equal(a, b) {
-	var a1 = clone_value(a);
-	var b1 = clone_value(b);
-	array_sort(a1, number_compare);
-	array_sort(b1, number_compare);
-	return array_equals(a1, b1);
-}
 
 function make_recipe(recipe_type, inputs) {
 	log("Looking up recipe for: %", item_array_to_string(inputs));
@@ -262,33 +278,11 @@ for (var i = 0; i < array_length(global.items); i ++) {
 	}
 }
 
-//for (var i = 0; i < array_length(global.item_combinations); i ++) {
-//	//var c = global.item_combinations[i];
-//	//var i1 = get_item_id(c[0]);
-//	//var i2 = get_item_id(c[1]);
-//	//var result = get_item_id(c[2]);
-//	//array_push(global.items[i1].combinations, [i2, result]);
-//	//array_push(global.items[i2].combinations, [i1, result]);
-//}
 
-
-
-
-
-function construct_item(item) {
-	var s = new_item(item.index);
-	
-	var names = variable_struct_get_names(item);
-	for (var i = 0; i < array_length(names); i ++) {
-		var n = names[i];
-		s[$ n] = item[$ n];
-	}
-	
-	if (s.is_container) {
-		s.item = construct_item(s.item);
-	}
-	
-	return s;
+function load_item(packet) {
+	var item = new_item(packet.index);
+	item.load_packet(packet);
+	return item;
 }
 
 function get_item_id(name) {
@@ -316,6 +310,50 @@ function new_plate_dirty() {
 	return new_item(get_item_id("Dirty Plate"));
 }
 
+#endregion
+
+#region Level data
+
+global.orders = [{
+	item: get_item_id("Green Eggs"),
+	item_sprite_index: 0,
+	ingredients: [get_item_id("Egg"), get_item_id("Lettuce")],
+}]
+
+global.level_data = [
+{
+	room: rm_game,
+	score_steps: [100, 200, 300],
+}
+]
+
+global.level_completion_data = [];
+
+for (var i = 0; i < array_length(global.level_data); i ++) {
+	array_push(global.level_completion_data, {
+		completed: false,
+		score: 0,
+		stars: 0,
+	});
+}
+
+function cur_level() {
+	return global.level_data[global.level_index];
+}
+
+function room_transition(rm) {
+	if (!instance_exists(obj_transition)) {
+		var t = instance_create_depth(0,0,0,obj_transition);
+		t.room_to = rm;
+		return t;
+	}
+	return noone;
+}
+
+#endregion
+
+#region Other
+
 function add_score(s) {
 	global.game_score += s;
 	global.game_score = max(global.game_score, 0);
@@ -336,8 +374,12 @@ function game_level_end() {
 	instance_create_depth(0, 0, -9999, obj_game_end);
 }
 
-//var it = new_item(get_item_id("Lettuce"));
-//log(it.is_applicable_to(RecipeType.chopping));
-//log(it.is_applicable_to(RecipeType.combo));
-//log(it.is_applicable_to(RecipeType.pan_cooked));
-//log(it.is_applicable_to(RecipeType.pot_cooked));
+
+function make_extinguisher_particle(xx, yy, dir) {
+	with (instance_create_depth(xx, yy, -yy, obj_particle_extinguisher)) {
+		angle = dir * 180/pi + choose(-1, 1) * random(35);
+	}
+}
+
+
+#endregion

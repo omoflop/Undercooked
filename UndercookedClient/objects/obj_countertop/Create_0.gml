@@ -19,7 +19,11 @@ function progress_finished() {}
 function draw() {}
 
 function set_item(i) {
-	send_info("set_item", {id: unique_id, item: i});
+	send_info("set_item", {id: unique_id, item: i.make_packet()});
+}
+
+function update_item() {
+	send_info("set_item", {id: unique_id, item: item.make_packet()});
 }
 
 function interact() {
@@ -70,8 +74,6 @@ function swap() {
 			var temp = item;
 			set_item(target.item);
 			target.set_item(temp);
-			//item = target.item;
-			//target.item = temp;
 		} else {
 			
 			// Add item to container
@@ -80,10 +82,10 @@ function swap() {
 			// Remove other item
 			if (player_hold_container) {
 				set_item(new_empty_item());
-				//item = new_empty_item();
+				target.update_item();
 			} else {
 				target.set_item(new_empty_item());
-				//target.item = new_empty_item();
+				update_item();
 			}
 		}
 	} else {
@@ -93,8 +95,6 @@ function swap() {
 		var temp = item;
 		set_item(target.item);
 		target.set_item(temp);
-		//item = target.item;
-		//target.item = temp;
 	}
 }
 

@@ -54,3 +54,7 @@ function array_push_all(array, other_array) {
 		array_push(array, other_array[i]);	
 	}
 }
+
+function bool_string(b) {
+	return b ? "true" : "false";
+}

@@ -27,3 +27,4 @@ function mouse_hover(x, y, w, h) {
 }
 
 function press() {}
+function press_outside() {}

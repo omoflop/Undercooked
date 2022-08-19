@@ -1,18 +1,15 @@
 /// @desc
 
-orders = [{
-	item: get_item_id("Green Eggs"),
-	item_sprite_index: 0,
-	ingredients: [get_item_id("Egg"), get_item_id("Lettuce")],
-}]
 
 current_orders = [];
 
-function Order(o) constructor {
+function Order(o, id) constructor {
 	order_data = o;
 	progress = 0;
 	progress_speed = 1/1800;
 	max_tip_score = 30;
+	
+	unique_id = id;
 	
 	controller = other;
 	index = -1;
@@ -30,6 +27,10 @@ function Order(o) constructor {
 	death_timer_max = 10;
 	dead = false;
 	color = c_white;
+	
+	function toString() {
+		return "Order[" + string(index) + "] (" + global.items[order_data.item].name + ")";
+	}
 	
 	function set_index(i) {
 		var margin = 5;
@@ -121,9 +122,8 @@ function Order(o) constructor {
 
 
 
-function add_order() {
-	var i = irandom(array_length(orders)-1);
-	var o = new Order(clone_struct(orders[i]));
+function add_order(order_data, order_id) {
+	var o = new Order(order_data, order_id);
 	o.set_index(array_length(current_orders));
 	array_push(current_orders, o);
 }
@@ -136,18 +136,30 @@ function delete_order(index) {
 	}
 }
 
-function accept_order(item_index) {
+function accept_order(order_id) {
+	get_order(order_id).finish();
+}
+
+function timeout_order(order_id) {
+	
+}
+
+function get_order(unique_id) {
+	for (var i = 0; i < array_length(current_orders); i ++) {
+		var c = current_orders[i];
+		if (c.unique_id == unique_id) {
+			return c;
+		}
+	}
+	return -1;
+}
+
+function check_item_accept(item_index) {
 	for (var i = 0; i < array_length(current_orders); i ++) {
 		var c = current_orders[i];
 		if (c.order_data.item == item_index) {
-			
-			c.finish();
-			return true;
+			return c.unique_id;
 		}
 	}
-	return false;
+	return -1;
 }
-
-add_order();
-add_order();
-add_order();

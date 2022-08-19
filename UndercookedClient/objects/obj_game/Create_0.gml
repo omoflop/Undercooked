@@ -1,8 +1,13 @@
 /// @desc
 
-global.score = 0;
-global.player_frozen = false;
+global.server_ip = "127.0.0.1";
 
+global.game_score = 0;
+global.player_frozen = true;
+
+global.level_index = -1;
+
+global.game_timer = 0;
 
 global.controller_index = 0;
 global.controlled_connected = false;
@@ -35,7 +40,7 @@ function get_input() {
 		}
 		try_reconnect();
 	}
-		
+	
 	if (gamepad_is_connected(global.controller_index)) {
 		var dz = gamepad_get_axis_deadzone(global.controller_index);
 		

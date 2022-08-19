@@ -35,17 +35,17 @@ function draw_item() {
 
 function interact() {
 	
-	// Player held item is not empty
-	if (!target.item.empty) {
+	// Player held item is not empty and sink doesn't currently have a plate
+	if (!target.item.empty && item.empty) {
 		
 		// Check if held item is a dirty plate
 		if (target.item.index == dirty_plate_subimg) {
 			
 			// Set current item to dirty plate
-			item = target.item;
+			set_item(target.item);
 			
 			// Remove player held item
-			target.item = new_empty_item();
+			target.set_item(new_empty_item());
 		}
 	} 
 	// Player is not holding any item
@@ -55,10 +55,10 @@ function interact() {
 		if (count > 0) {
 			
 			// Remove plate
-			count --;
+			send_info("update_stack_count", {id: unique_id, count: -1});
 			
 			// Setup new player item
-			target.item = new_plate();
+			target.set_item(new_plate());
 		}
 	}
 }
@@ -76,8 +76,8 @@ function hold_interact() {
 function progress_finished() {
 	
 	// Remove item
-	item = new_empty_item();
+	set_item(new_empty_item());
 	
 	// Add plate
-	count ++;
+	send_info("update_stack_count", {id: unique_id, count: 1});
 }

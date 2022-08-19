@@ -15,10 +15,15 @@ switch (type_event)
 	case network_type_connect:
 		var socket = ds_map_find_value(async_load, "socket");
 		
-		client_connect(socket);
-		
-		// Increase client count
-		client_count ++;
+		if (game_active) {
+			send_info("connection_reject");
+		} else {
+			
+			client_connect(socket);
+			
+			// Increase client count
+			client_count ++;
+		}
 		break;
 		
 	case network_type_disconnect:
@@ -30,7 +35,8 @@ switch (type_event)
 		client_count --;
 		
 		if (client_count <= 0) {
-			game_active = false;
+			deactivate_game();
+			deactivate_level();
 		}
 		break;
 }

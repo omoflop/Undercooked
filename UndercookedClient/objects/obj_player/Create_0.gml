@@ -20,11 +20,11 @@ reach = 20;
 extinguisher_index = get_item_id("Extinguisher");
 
 function set_item(i) {
-	send_info("set_item", {id: global.client.client_id, item: i});
+	send_info("set_item", {id: global.client.client_id, item: i.make_packet()});
 }
 
 function update_item() {
-	send_info("set_item", {id: global.client.client_id, item: item});
+	send_info("set_item", {id: global.client.client_id, item: item.make_packet()});
 }
 
 update_item();
@@ -33,10 +33,11 @@ function find_reach() {
 	var xx = x + reach * cos(axis_angle);
 	var yy = y + reach * sin(axis_angle);
 	
-	var c = collision_line(x, y, xx, yy, obj_countertop, 0, 1);
+	var list = ds_list_create();
+	var c = collision_line_list(x, y, xx, yy, obj_countertop, 0, 1, list, 1);
 	
-	if (instance_exists(c)) {
-		with (c) {
+	if (c > 0 && instance_exists(list[| 0])) {
+		with (list[| 0]) {
 			player_hover = true;
 			
 			if (global.key_action) {
@@ -48,6 +49,7 @@ function find_reach() {
 			}
 		}
 	}
+	ds_list_destroy(list);
 }
 
 function process_extinguisher() {
@@ -55,12 +57,9 @@ function process_extinguisher() {
 		var xx = x + 14 * cos(axis_angle);
 		var yy = y + 14 * sin(axis_angle);
 		
+		make_extinguisher_particle(xx, yy, axis_angle)
+		send_info("make_extinguisher_particle", {x: xx, y: yy, dir: axis_angle})
 		
-		var a = point_direction(x, y, xx, yy);
-		
-		with (instance_create_depth(xx, yy, -yy, obj_particle_extinguisher)) {
-			angle = a + choose(-1, 1) * random(35);
-		}
 	}
 }
 
@@ -69,3 +68,5 @@ function process_network() {
 		send_info("player_movement", {id: global.client.client_id, x: x, y: y, dir: axis_angle});
 	}
 }
+
+send_info("player_movement", {id: global.client.client_id, x: x, y: y, dir: axis_angle});

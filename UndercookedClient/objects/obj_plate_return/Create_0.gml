@@ -9,14 +9,7 @@ count = 0;
 timer = 3;
 
 // Get dirty plate image index
-item_subimg = get_item_id("Dirty Plate")
-
-function trigger() {
-	
-	// Add plate timer
-	var t = time_source_create(time_source_game, timer, time_source_units_seconds, add_plate);
-	time_source_start(t);
-}
+item_subimg = get_item_id("Dirty Plate");
 
 function add_plate() {
 	count ++;
@@ -31,10 +24,9 @@ function interact() {
 	if (count > 0) {
 		
 		// Remove plate
-		count --;
+		send_info("update_stack_count", {id: unique_id, count: -1});
 		
 		// Setup new player item
 		target.set_item(new_plate_dirty());
-		//target.item = new_plate_dirty();
 	}
 }

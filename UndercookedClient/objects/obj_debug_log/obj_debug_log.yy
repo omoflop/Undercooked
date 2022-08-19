@@ -26,8 +26,8 @@
   "properties": [],
   "overriddenProperties": [],
   "parent": {
-    "name": "Debug Log",
-    "path": "folders/Objects/Debug Log.yy",
+    "name": "System",
+    "path": "folders/Objects/System.yy",
   },
   "resourceVersion": "1.0",
   "name": "obj_debug_log",

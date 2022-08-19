@@ -13,18 +13,15 @@ function interact() {
 	if (instance_exists(obj_order_controller)) {
 		with (obj_order_controller) {
 			
+			var accept_index = check_item_accept(i.item.index);
+			
 			// Accept order and determine success
-			if (accept_order(i.item.index)) {
+			if (accept_index != -1) {
+				
+				send_info("finish_order", {id: accept_index});
 				
 				// Reset held item
-				other.target.item = new_empty_item();
-				
-				// Make sure a plate return exists
-				if (instance_exists(obj_plate_return)) {
-					
-					// Trigger plate return
-					obj_plate_return.trigger();
-				}
+				other.target.set_item(new_empty_item());
 			}
 		}
 	}

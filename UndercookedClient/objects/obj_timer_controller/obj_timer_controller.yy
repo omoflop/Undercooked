@@ -31,7 +31,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "Game Controllers",
-    "path": "folders/Objects/Game Controllers.yy",
+    "path": "folders/Objects/System/Game Controllers.yy",
   },
   "resourceVersion": "1.0",
   "name": "obj_timer_controller",

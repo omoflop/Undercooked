@@ -18,6 +18,11 @@ clients = [];
 
 event_user(15);
 
+level_active = false;
 game_active = false;
 
 window_set_position(2336, 165);
+
+instance_create_depth(0,0,0,timer_controller);
+
+level_ready = [];

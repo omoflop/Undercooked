@@ -31,7 +31,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "Lobby",
-    "path": "folders/Objects/Lobby.yy",
+    "path": "folders/Objects/UI/Lobby.yy",
   },
   "resourceVersion": "1.0",
   "name": "obj_lobby_button_test_up",

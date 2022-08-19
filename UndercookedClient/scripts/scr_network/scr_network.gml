@@ -12,10 +12,8 @@ function received_packet(buffer)
 	var json = buffer_read(buffer, buffer_string);
 	var packet = json_parse(json);
 	
-	if (instance_exists(obj_debug_log)) {
-		with (obj_debug_log) {
-			setup(msg_id + " " + string(packet));
-		}
+	if (msg_id != "player_movement") {
+		debug_log(msg_id + " " + string(packet), c_gray);
 	}
 	
 	switch (msg_id) 
@@ -26,9 +24,16 @@ function received_packet(buffer)
 			break;
 		
 		case "client_connect":
+			if (packet.item == 0) {
+				packet.item = new_empty_item();
+			}
 			array_push(global.other_clients, packet);
 			
 			global.player_count ++;
+			break;
+		
+		case "connection_reject":
+			room_goto(rm_login_reject);
 			break;
 		
 		case "client_disconnect":
@@ -59,7 +64,7 @@ function received_packet(buffer)
 			break;
 		
 		case "start_game":
-			room_goto(rm_game);
+			room_goto(rm_map);
 			break;
 		
 		case "set_item":
@@ -68,15 +73,15 @@ function received_packet(buffer)
 				if (inst.client_id == global.client.client_id) {
 					if (instance_exists(obj_player)) {
 						with (obj_player) {
-							item = construct_item(packet.item);
+							item = load_item(packet.item);
 						}
 					}
 				}
-				inst.item = packet.item;
+				inst.item = load_item(packet.item);
 			} else if (instance_exists(obj_countertop)) {
 				with (obj_countertop) {
 					if (unique_id == packet.id) {
-						item = construct_item(packet.item);
+						item = load_item(packet.item);
 					}
 				}
 			}
@@ -87,6 +92,99 @@ function received_packet(buffer)
 			c.x = packet.x;
 			c.y = packet.y;
 			c.dir = packet.dir;
+			break;
+		
+		case "set_timer":
+			global.game_timer = packet.time;
+			if (instance_exists(obj_timer_controller)) {
+				with (obj_timer_controller) {
+					alarm[0] = -1;
+				}
+			}
+			break;
+		
+		case "level_timeout":
+			game_level_end();
+			break;
+		
+		case "add_order":
+			if (instance_exists(obj_order_controller)) {
+				with (obj_order_controller) {
+					add_order(global.orders[packet.order], packet.id);
+				}
+			}
+			break;
+		
+		case "finish_order":
+			if (instance_exists(obj_order_controller)) {
+				with (obj_order_controller) {
+					accept_order(packet.id);
+				}
+			}
+			break;
+		
+		case "timeout_order":
+			if (instance_exists(obj_order_controller)) {
+				with (obj_order_controller) {
+					timeout_order(packet.id);
+				}
+			}
+			break;
+		
+		case "update_stack_count":
+			if (instance_exists(obj_countertop)) {
+				with (obj_countertop) {
+					if (unique_id == packet.id) {
+						count += packet.count;
+					}
+				}
+			}
+			break;
+		
+		case "add_plate_return_stack":
+			if (instance_exists(obj_plate_return)) {
+				with (obj_plate_return) {
+					add_plate();
+				}
+			}
+			break;
+		
+		case "make_extinguisher_particle":
+			var xx = packet.x;
+			var yy = packet.y;
+			var dir = packet.dir;
+		
+			make_extinguisher_particle(xx, yy, dir);
+			break;
+		
+		case "map_movement":
+			if (instance_exists(obj_map_player)) {
+				with (obj_map_player) {
+					x_goal = packet.x;
+					y_goal = packet.y;
+					image_index = packet.subimg;
+				}
+			}
+			break;
+		
+		case "goto_level":	
+			global.level_index = packet.level_index;
+			with (instance_create_depth(0,0,0,obj_transition)) {
+				finished = function() {
+					send_info("level_ready", {id: global.client.client_id});
+				}
+				room_to = cur_level().room;
+			}
+			break;
+		
+		case "start_level":
+			global.player_frozen = false;
+			break;
+		
+		case "endscreen_done":
+			if (room == rm_level_endscreen) {
+				room_transition(rm_map);
+			}
 			break;
 	}
 }
